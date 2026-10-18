@@ -1,26 +1,22 @@
 import Link from "next/link";
+import { primaryButton } from "@/Utils/ui";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-[#f7f7fb] flex items-center justify-center px-6">
+    <div className="flex min-h-[60vh] items-center justify-center px-6">
       <div className="text-center">
-        <h1 className="text-8xl font-extrabold tracking-tight text-[#5b33e8]">
+        <h1 className="text-7xl font-semibold tracking-tight text-accent sm:text-8xl">
           404
         </h1>
 
-        <h2 className="mt-3 text-2xl font-bold text-[#252b3a]">
-          Page not found
-        </h2>
+        <h2 className="mt-3 text-xl font-semibold text-ink">Page not found</h2>
 
-        <p className="mt-2 text-sm text-[#7b8497] max-w-sm mx-auto">
-          Sorry, the page you are looking for doesn't exist or may have been
-          moved.
+        <p className="mx-auto mt-2 max-w-sm text-sm text-muted">
+          Sorry, the page you are looking for doesn&apos;t exist or may have
+          been moved.
         </p>
 
-        <Link
-          href="/"
-          className="inline-block mt-7 px-6 py-2.5 rounded-xl bg-[#5b33e8] text-white text-sm font-semibold hover:bg-[#4d29ce] transition"
-        >
+        <Link href="/" className={`${primaryButton} mt-6 px-5`}>
           Go to Dashboard
         </Link>
       </div>

@@ -1,30 +1,78 @@
-import ExpenseBtn, { ExpenseForm } from "@/Components/AddExpenseBtn/ExpenseBtn";
-import Balance from "@/Components/BalanceCard/Balance";
-import { IoMdNotificationsOutline } from "react-icons/io";
+"use client";
+import BudgetProgressCard from "@/Components/Bento/BudgetProgressCard";
+import MetricCard from "@/Components/Bento/MetricCard";
+import TotalBalanceCard from "@/Components/Bento/TotalBalanceCard";
+import CategoryBreakdown from "@/Components/CategoryBreakdown/CategoryBreakdown";
+import MonthlyChart from "@/Components/Charts/MonthlyChart";
+import WeeklyChart from "@/Components/Charts/WeeklyChart";
+import TransactionList from "@/Components/TransactionList/TransactionList";
+import { useExpense, useExpenseStats } from "@/Context/ContextProvider";
+import { formatCurrency } from "@/Utils/expense";
+import { FiTrendingUp, FiTrendingDown } from "react-icons/fi";
 
-const page = () => {
+const DashboardPage = () => {
+  const { income } = useExpense();
+  const { totalExpenses, expenseCount } = useExpenseStats();
+
   return (
     <>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-[#252b3a]">Hi Sazzad 👋</h1>
-          <p className="mt-1 text-sm text-[#7b8497]">
-            Here's your financial overview for this month.
-          </p>
+      <div>
+        <p className="text-xs font-medium text-muted">Overview</p>
+        <h1 className="mt-1 text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+          Dashboard
+        </h1>
+      </div>
+
+      {/* Bento grid */}
+      <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2 xl:auto-rows-[10rem] xl:grid-cols-12">
+        <div className="xl:col-span-5 xl:row-span-2">
+          <TotalBalanceCard />
         </div>
 
-        <div className="flex items-center gap-4">
-          <button className="text-[#6b7790] hover:text-[#5b33e8] cursor-pointer bg-white border border-gray-400 p-1.5 rounded-xl">
-            <IoMdNotificationsOutline className="text-2xl" />
-          </button>
+        <div className="xl:col-span-4">
+          <MetricCard
+            label="Income"
+            value={formatCurrency(income)}
+            hint="Available balance"
+            tone="income"
+            icon={<FiTrendingUp className="text-lg" />}
+          />
+        </div>
 
-          <ExpenseBtn />
+        <div className="xl:col-span-3">
+          <MetricCard
+            label="Expenses"
+            value={formatCurrency(totalExpenses)}
+            hint={`${expenseCount} ${
+              expenseCount === 1 ? "transaction" : "transactions"
+            }`}
+            tone="expense"
+            icon={<FiTrendingDown className="text-lg" />}
+          />
+        </div>
+
+        <div className="xl:col-span-7">
+          <BudgetProgressCard />
+        </div>
+
+        <div className="xl:col-span-7 xl:row-span-2">
+          <WeeklyChart />
+        </div>
+
+        <div className="xl:col-span-5 xl:row-span-2">
+          <CategoryBreakdown limit={6} />
+        </div>
+
+        <div className="xl:col-span-12 xl:row-span-2">
+          <MonthlyChart />
+        </div>
+
+        <div className="xl:col-span-12 xl:row-span-2">
+          <TransactionList limit={6} showViewAll />
         </div>
       </div>
-      <ExpenseForm />
-      <Balance />
     </>
   );
 };
 
-export default page;
+export default DashboardPage;

@@ -1,16 +1,36 @@
 "use client";
-import { ExpenseContext } from "@/Context/ContextProvider";
-import React, { useContext, useState } from "react";
+import { CATEGORIES } from "@/Data/categories";
+import { useExpense } from "@/Context/ContextProvider";
+import React, { useState } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import { RxCross1 } from "react-icons/rx";
+import { inputClass, labelClass, primaryButton } from "@/Utils/ui";
 
-const ExpenseBtn = () => {
-  const { isOpen, setIsOpen } = useContext(ExpenseContext);
+const ExpenseBtn = ({
+  className = "",
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) => {
+  const { setIsOpen } = useExpense();
+
+  if (compact) {
+    return (
+      <button
+        onClick={() => setIsOpen(true)}
+        aria-label="Add expense"
+        className={`${primaryButton} h-10 w-10 px-0 ${className}`}
+      >
+        <HiOutlinePlusSm className="text-xl" />
+      </button>
+    );
+  }
 
   return (
     <button
       onClick={() => setIsOpen(true)}
-      className="flex items-center cursor-pointer gap-1.5 rounded-xl bg-[#5b33e8] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#4d29ce]"
+      className={`${primaryButton} ${className}`}
     >
       <HiOutlinePlusSm className="text-xl" />
       Add Expense
@@ -20,149 +40,136 @@ const ExpenseBtn = () => {
 
 export default ExpenseBtn;
 
+const emptyForm = { title: "", amount: "", category: "", date: "" };
+
 const ExpenseForm = () => {
-  const { isOpen, setIsOpen, ExpenseList, setExpenseList } =
-    useContext(ExpenseContext);
+  const { isOpen, setIsOpen, addExpense } = useExpense();
+  const [form, setForm] = useState(emptyForm);
 
   const onSumbit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries()) as unknown as IForm;
-    console.log(data);
-    setExpenseList((pre) => [...pre, data]);
-    e.currentTarget.reset();
+    addExpense(form);
+    setForm(emptyForm);
+    setIsOpen(false);
   };
-  console.log(ExpenseList);
+
+  const update = (key: keyof typeof emptyForm, value: string) =>
+    setForm((previous) => ({ ...previous, [key]: value }));
 
   return (
     <div
       onClick={() => setIsOpen(false)}
-      className={`fixed flex justify-center items-center inset-0 bg-black/45 backdrop-blur-[2px] transition-opacity duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      aria-hidden={!isOpen}
+      inert={!isOpen}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 transition-opacity duration-300 ${
+        isOpen
+          ? "pointer-events-auto opacity-100"
+          : "pointer-events-none opacity-0"
+      }`}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="absolute top-10 bottom-10 left-4 right-4 min-[400px]:top-auto min-[400px]:left-auto min-[400px]:right-auto min-[400px]:bottom-auto min-[400px]:h-140 min-[400px]:w-100 rounded-2xl bg-white p-5 shadow-2xl"
+        className={`max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-line bg-card p-5 shadow-2xl transition-all duration-300 sm:p-6 ${
+          isOpen ? "translate-y-0 scale-100" : "translate-y-4 scale-95"
+        }`}
       >
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Add Expense</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Keep track of your spending
+            <h2 className="text-base font-semibold text-ink">Add Expense</h2>
+            <p className="mt-0.5 text-sm text-muted">
+              Track where your money goes
             </p>
           </div>
 
           <button
             onClick={() => setIsOpen(false)}
             type="button"
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-red-100 hover:text-red-600"
+            aria-label="Close"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-line bg-surface text-muted transition hover:text-ink"
           >
             <RxCross1 size={16} strokeWidth={2} />
           </button>
         </div>
 
-        <form onSubmit={onSumbit} className="space-y-5">
-          {/* Title */}
+        <form onSubmit={onSumbit} className="space-y-4">
           <div>
-            <label
-              htmlFor="title"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="title" className={labelClass}>
               Expense Title
             </label>
-
             <input
               required
               type="text"
               name="title"
               id="title"
+              value={form.title}
+              onChange={(e) => update("title", e.target.value)}
               placeholder="e.g. Lunch, Bus fare..."
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-100"
+              className={inputClass}
             />
           </div>
 
-          {/* Amount */}
           <div>
-            <label
-              htmlFor="amount"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="amount" className={labelClass}>
               Amount
             </label>
-
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-500">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted">
                 ৳
               </span>
-
               <input
                 required
                 type="number"
                 name="amount"
                 id="amount"
+                min="0"
+                step="0.01"
+                value={form.amount}
+                onChange={(e) => update("amount", e.target.value)}
                 placeholder="0.00"
-                className="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-9 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                className={`${inputClass} pl-9`}
               />
             </div>
           </div>
 
-          {/* Category */}
           <div>
-            <label
-              htmlFor="category"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="category" className={labelClass}>
               Category
             </label>
-
             <select
               required
               name="category"
               id="category"
-              className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 outline-none transition focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-100"
+              value={form.category}
+              onChange={(e) => update("category", e.target.value)}
+              className={`${inputClass} appearance-none ${
+                form.category ? "text-ink" : "text-muted/70"
+              }`}
             >
               <option value="">Select a category</option>
-              <option value="food">🍔 Food</option>
-              <option value="transport">🚌 Transport</option>
-              <option value="shopping">🛍️ Shopping</option>
-              <option value="housing">🏠 Rent / Housing</option>
-              <option value="bills">💡 Bills & Utilities</option>
-              <option value="health">💊 Health</option>
-              <option value="education">🎓 Education</option>
-              <option value="entertainment">🎮 Entertainment</option>
-              <option value="subscription">📱 Subscription</option>
-              <option value="clothing">👕 Clothing</option>
-              <option value="travel">✈️ Travel</option>
-              <option value="gifts">🎁 Gifts</option>
-              <option value="technology">💻 Technology</option>
-              <option value="others">💰 Others</option>
+              {CATEGORIES.map((category) => (
+                <option key={category.value} value={category.value}>
+                  {category.emoji} {category.label}
+                </option>
+              ))}
             </select>
           </div>
 
-          {/* Date */}
           <div>
-            <label
-              htmlFor="date"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="date" className={labelClass}>
               Date
             </label>
-
             <input
               required
               type="date"
               name="date"
               id="date"
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 outline-none transition focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-100"
+              value={form.date}
+              onChange={(e) => update("date", e.target.value)}
+              className={inputClass}
             />
           </div>
 
-          {/* Submit */}
-          <button
-            onClick={() => setIsOpen(false)}
-            type="submit"
-            className="cursor-pointer mt-2 w-full rounded-xl bg-[#5b33e8] py-3 text-sm font-semibold text-white transition hover:bg-purple-700 active:scale-[0.98]"
-          >
+          <button type="submit" className={`${primaryButton} mt-2 w-full py-3`}>
             Add Expense
           </button>
         </form>

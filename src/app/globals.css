@@ -1,1 +1,35 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-app: #0b0b10;
+  --color-card: #15151d;
+  --color-surface: #1d1d28;
+  --color-line: #272734;
+  --color-accent: #8b5cf6;
+  --color-income: #34d399;
+  --color-expense: #fb7185;
+  --color-ink: #f4f4f8;
+  --color-muted: #9696a8;
+}
+
+html {
+  color-scheme: dark;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-app);
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  color: var(--color-ink);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #33333f transparent;
+}
