@@ -14,7 +14,7 @@ export default async function SignUpPage() {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Everything is stored in your own MongoDB account."
+      subtitle="Create your account and start tracking every expense with ease."
       footer={
         <span className="text-muted">
           Already registered?{" "}

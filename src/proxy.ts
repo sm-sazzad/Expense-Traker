@@ -17,12 +17,6 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hasSessionCookie = Boolean(getSessionCookie(request));
 
-  if (!hasSessionCookie && !isPublic(pathname)) {
-    const url = new URL("/sign-in", request.url);
-    if (pathname !== "/") url.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(url);
-  }
-
   if (hasSessionCookie && isPublic(pathname)) {
     return NextResponse.redirect(new URL("/", request.url));
   }

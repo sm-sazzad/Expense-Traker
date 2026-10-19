@@ -5,7 +5,7 @@ import "./globals.css";
 import ContextProvider from "@/Context/ContextProvider";
 import AppShell from "@/Components/AppShell/AppShell";
 import { auth } from "@/lib/auth";
-import { loadExpenses, loadIncome } from "@/lib/expenses-data";
+import { currentMonthKey, loadExpenses, loadMonthlyIncomes } from "@/lib/expenses-data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,12 +27,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
   let expenses: IForm[] = [];
   let income = 0;
+  let monthlyIncomes: Record<string, number> = {};
 
   if (session) {
-    [expenses, income] = await Promise.all([
+    [expenses, monthlyIncomes] = await Promise.all([
       loadExpenses(session.user.id),
-      loadIncome(session.user.id),
+      loadMonthlyIncomes(session.user.id),
     ]);
+    income = monthlyIncomes[currentMonthKey()] ?? 0;
   }
 
   const user = session
@@ -53,6 +55,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           userId={session?.user.id ?? null}
           initialExpenses={expenses}
           initialIncome={income}
+          initialMonthlyIncomes={monthlyIncomes}
         >
           <AppShell user={user}>{children}</AppShell>
         </ContextProvider>

@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import { RxCross1 } from "react-icons/rx";
 import { inputClass, labelClass, primaryButton } from "@/Utils/ui";
+import { FaPlus } from "react-icons/fa";
 
 const ExpenseBtn = ({
   className = "",
@@ -20,9 +21,10 @@ const ExpenseBtn = ({
       <button
         onClick={() => setIsOpen(true)}
         aria-label="Add expense"
-        className={`${primaryButton} h-10 w-10 px-0 ${className}`}
+        className={`${primaryButton} h-10 w-10 px-0 ${className} flex items-center justify-center text-center`}
       >
-        <HiOutlinePlusSm className="text-xl" />
+        {/* <FaPlus /> */}
+        <h1 className="font-bold text-2xl">+</h1>
       </button>
     );
   }
@@ -40,20 +42,30 @@ const ExpenseBtn = ({
 
 export default ExpenseBtn;
 
-const emptyForm = { title: "", amount: "", category: "", date: "" };
+const todayLocal = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+};
+
+const emptyForm = () => ({
+  title: "",
+  amount: "",
+  category: "",
+  date: todayLocal(),
+});
 
 const ExpenseForm = () => {
   const { isOpen, setIsOpen, addExpense } = useExpense();
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(emptyForm());
 
   const onSumbit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     addExpense(form);
-    setForm(emptyForm);
+    setForm(emptyForm());
     setIsOpen(false);
   };
 
-  const update = (key: keyof typeof emptyForm, value: string) =>
+  const update = (key: keyof ReturnType<typeof emptyForm>, value: string) =>
     setForm((previous) => ({ ...previous, [key]: value }));
 
   return (

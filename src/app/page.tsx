@@ -6,13 +6,12 @@ import CategoryBreakdown from "@/Components/CategoryBreakdown/CategoryBreakdown"
 import MonthlyChart from "@/Components/Charts/MonthlyChart";
 import WeeklyChart from "@/Components/Charts/WeeklyChart";
 import TransactionList from "@/Components/TransactionList/TransactionList";
-import { useExpense, useExpenseStats } from "@/Context/ContextProvider";
+import { useExpenseStats } from "@/Context/ContextProvider";
 import { formatCurrency } from "@/Utils/expense";
 import { FiTrendingUp, FiTrendingDown } from "react-icons/fi";
 
 const DashboardPage = () => {
-  const { income } = useExpense();
-  const { totalExpenses, expenseCount } = useExpenseStats();
+  const { totalExpenses, expenseCount, remaining } = useExpenseStats();
 
   return (
     <>
@@ -31,10 +30,10 @@ const DashboardPage = () => {
 
         <div className="xl:col-span-4">
           <MetricCard
-            label="Income"
-            value={formatCurrency(income)}
-            hint="Available balance"
-            tone="income"
+            label="Remaining balance"
+            value={formatCurrency(remaining)}
+            hint="Income minus expenses"
+            tone={remaining < 0 ? "expense" : "income"}
             icon={<FiTrendingUp className="text-lg" />}
           />
         </div>

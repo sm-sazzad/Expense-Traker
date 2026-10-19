@@ -4,10 +4,11 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import {
+  budgetDocId,
   budgetsCollection,
+  currentMonthKey,
   expensesCollection,
   loadExpenses,
-  loadIncome,
   toForm,
 } from "@/lib/expenses-data";
 
@@ -32,7 +33,11 @@ export const listExpenses = async (): Promise<IForm[]> => {
 
 export const getIncome = async (): Promise<number> => {
   const userId = await requireUserId();
-  return loadIncome(userId);
+  const month = currentMonthKey();
+  const doc = await budgetsCollection().findOne({
+    _id: budgetDocId(userId, month),
+  });
+  return doc?.income ?? 0;
 };
 
 export const createExpense = async (expense: IForm): Promise<IForm> => {
@@ -69,10 +74,11 @@ export const clearExpenses = async (): Promise<void> => {
 export const setIncome = async (value: number): Promise<void> => {
   const userId = await requireUserId();
   const income = Number.isFinite(value) && value > 0 ? value : 0;
+  const month = currentMonthKey();
 
   await budgetsCollection().updateOne(
-    { _id: userId },
-    { $set: { income } },
+    { _id: budgetDocId(userId, month) },
+    { $set: { income, userId, month } },
     { upsert: true },
   );
 
@@ -82,10 +88,11 @@ export const setIncome = async (value: number): Promise<void> => {
 export const addToBalance = async (amount: number): Promise<void> => {
   const userId = await requireUserId();
   if (!Number.isFinite(amount) || amount <= 0) return;
+  const month = currentMonthKey();
 
   await budgetsCollection().updateOne(
-    { _id: userId },
-    { $inc: { income: amount } },
+    { _id: budgetDocId(userId, month) },
+    { $inc: { income: amount }, $set: { userId, month } },
     { upsert: true },
   );
 
@@ -103,9 +110,10 @@ export const migrateLocalData = async (
 ): Promise<boolean> => {
   const userId = await requireUserId();
 
+  const month = currentMonthKey();
   const [existingCount, existingBudget] = await Promise.all([
     expensesCollection().countDocuments({ userId }),
-    budgetsCollection().findOne({ _id: userId }),
+    budgetsCollection().findOne({ _id: budgetDocId(userId, month) }),
   ]);
 
   if (existingCount > 0 || (existingBudget?.income ?? 0) > 0) return false;
@@ -136,8 +144,8 @@ export const migrateLocalData = async (
 
   if (Number.isFinite(localIncome) && localIncome > 0) {
     await budgetsCollection().updateOne(
-      { _id: userId },
-      { $set: { income: localIncome } },
+      { _id: budgetDocId(userId, month) },
+      { $set: { income: localIncome, userId, month } },
       { upsert: true },
     );
   }

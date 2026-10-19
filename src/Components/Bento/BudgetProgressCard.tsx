@@ -1,13 +1,16 @@
 "use client";
-import { useExpense, useExpenseStats } from "@/Context/ContextProvider";
+import { useExpenseStats } from "@/Context/ContextProvider";
 import { formatCurrency } from "@/Utils/expense";
 import { card } from "@/Utils/ui";
 
 const BudgetProgressCard = () => {
-  const { income } = useExpense();
-  const { totalExpenses, remaining } = useExpenseStats();
+  const { remaining, currentMonthIncome, currentMonthTotal } =
+    useExpenseStats();
 
-  const used = income > 0 ? Math.min((totalExpenses / income) * 100, 100) : 0;
+  const used =
+    currentMonthIncome > 0
+      ? Math.min((currentMonthTotal / currentMonthIncome) * 100, 100)
+      : 0;
   const over = remaining < 0;
 
   return (
@@ -35,7 +38,9 @@ const BudgetProgressCard = () => {
       </div>
 
       <p className="text-xs text-muted">
-        {formatCurrency(totalExpenses)} of {formatCurrency(income)}
+        {formatCurrency(currentMonthTotal)} of {formatCurrency(
+          currentMonthIncome,
+        )}
       </p>
     </section>
   );

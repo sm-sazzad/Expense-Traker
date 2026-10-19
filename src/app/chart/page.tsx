@@ -1,4 +1,5 @@
 import CategoryBreakdown from "@/Components/CategoryBreakdown/CategoryBreakdown";
+import ExpenseLineChart from "@/Components/Charts/ExpenseLineChart";
 import MonthlyChart from "@/Components/Charts/MonthlyChart";
 import WeeklyChart from "@/Components/Charts/WeeklyChart";
 
@@ -15,10 +16,11 @@ const page = () => {
         </p>
       </div>
 
-      <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-2">
+      <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-2 mb-5">
         <WeeklyChart />
         <MonthlyChart />
       </div>
+      <ExpenseLineChart />
 
       <div className="mt-4">
         <CategoryBreakdown />

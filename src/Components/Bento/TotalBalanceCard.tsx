@@ -1,13 +1,13 @@
 "use client";
 import AddBalanceBtn from "@/Components/AddBalanceBtn/AddBalanceBtn";
-import { useExpense, useExpenseStats } from "@/Context/ContextProvider";
+import { useExpenseStats } from "@/Context/ContextProvider";
 import { formatCurrency } from "@/Utils/expense";
 import { card } from "@/Utils/ui";
 import { FiArrowUpRight } from "react-icons/fi";
 
 const TotalBalanceCard = () => {
-  const { income } = useExpense();
-  const { totalExpenses, remaining } = useExpenseStats();
+  const { totalExpenses, totalBalance, remaining, carryForward } =
+    useExpenseStats();
 
   return (
     <section
@@ -18,8 +18,13 @@ const TotalBalanceCard = () => {
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium text-muted">Total Balance</p>
+          {carryForward !== 0 && (
+            <p className="text-[10px] text-muted mt-0.5">
+              Includes {formatCurrency(carryForward)} carried forward
+            </p>
+          )}
           <p className="mt-3 truncate text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            {formatCurrency(income)}
+            {formatCurrency(totalBalance)}
           </p>
         </div>
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/12 text-accent">

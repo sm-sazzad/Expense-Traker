@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useExpense } from "@/Context/ContextProvider";
 import logo from "@/assets/expensely_logo_cutout2.png";
 import Navbar from "@/Components/Navbar";
 import ExpenseBtn, { ExpenseForm } from "@/Components/AddExpenseBtn/ExpenseBtn";
@@ -18,7 +20,9 @@ const AppShell = ({
   user: ShellUser | null;
 }) => {
   const [open, setOpen] = useState(false);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
   const close = () => setOpen(false);
+  const { userId } = useExpense();
 
   const pathname = usePathname();
   const isAuthRoute = pathname === "/sign-in" || pathname === "/sign-up";
@@ -95,7 +99,16 @@ const AppShell = ({
                 <ExpenseBtn compact />
               </div>
 
-              <UserMenu user={user} />
+              {userId === null ? (
+                <Link
+                  href="/sign-in"
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-xl border border-line bg-surface px-4 py-2.5 text-sm font-semibold text-ink transition hover:border-accent/50 hover:text-accent"
+                >
+                  Sign in
+                </Link>
+              ) : (
+                <UserMenu user={user} />
+              )}
 
               <button
                 aria-label="Notifications"
@@ -107,7 +120,30 @@ const AppShell = ({
           </header>
 
           <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
-            <div className="mx-auto w-full max-w-[1400px]">{children}</div>
+            {userId === null && !bannerDismissed && (
+              <div className="mx-auto w-full max-w-350 mb-4">
+                <div className="flex items-center gap-2 rounded-xl border border-line bg-surface p-3">
+                  <p className="text-sm text-ink">
+                    Your data is saved locally only.{" "}
+                    <Link
+                      href="/sign-in"
+                      className="text-accent font-semibold hover:underline"
+                    >
+                      Sign in to save permanently
+                    </Link>{" "}
+                    .
+                  </p>
+                  <button
+                    onClick={() => setBannerDismissed(true)}
+                    aria-label="Dismiss"
+                    className="shrink-0 text-muted hover:text-ink"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
+            <div className="mx-auto w-full max-w-350">{children}</div>
           </main>
         </div>
       </div>
