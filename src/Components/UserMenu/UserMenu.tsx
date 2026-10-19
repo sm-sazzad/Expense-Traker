@@ -45,3 +45,32 @@ const UserMenu = ({ user }: { user: ShellUser | null }) => {
 };
 
 export default UserMenu;
+
+const UserMenu1 = ({ user }: { user: ShellUser | null }) => {
+  const name = user?.name?.trim() || "Guest";
+
+  return (
+    <Link
+      href="/profile"
+      title={user ? `Signed in as ${name}` : "Guest"}
+      className="group flex min-w-0 shrink-0 items-center gap-2.5 rounded-xl border border-line bg-card py-1.5 pl-1.5 pr-3 transition hover:border-accent/50"
+    >
+      <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-accent/15 text-[11px] font-semibold text-accent">
+        {getInitials(name)}
+        {user?.image && (
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-cover object-cover object-center bg-center"
+            style={{ backgroundImage: `url("${user.image}")` }}
+          />
+        )}
+      </span>
+
+      <span className="max-w-36 truncate text-sm font-semibold text-ink">
+        {name}
+      </span>
+    </Link>
+  );
+};
+
+export { UserMenu1 };

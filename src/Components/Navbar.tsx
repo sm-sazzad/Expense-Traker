@@ -7,7 +7,10 @@ import { usePathname } from "next/navigation";
 
 import ExpenseBtn from "@/Components/AddExpenseBtn/ExpenseBtn";
 import AddBalanceBtn from "@/Components/AddBalanceBtn/AddBalanceBtn";
-import UserMenu, { type ShellUser } from "@/Components/UserMenu/UserMenu";
+import UserMenu, {
+  UserMenu1,
+  type ShellUser,
+} from "@/Components/UserMenu/UserMenu";
 
 import {
   MdDashboard,
@@ -102,7 +105,7 @@ const Navbar = ({
       </nav>
 
       <div className="mt-4 space-y-2 border-t border-line pt-4">
-        <UserMenu user={user} />
+        <UserMenu1 user={user} />
         <ExpenseBtn className="w-full" />
         <AddBalanceBtn className="w-full" />
       </div>
