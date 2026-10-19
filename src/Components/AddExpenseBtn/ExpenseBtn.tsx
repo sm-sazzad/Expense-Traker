@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import { RxCross1 } from "react-icons/rx";
 import { inputClass, labelClass, primaryButton } from "@/Utils/ui";
-import { FaPlus } from "react-icons/fa";
+
 
 const ExpenseBtn = ({
   className = "",
@@ -23,7 +23,7 @@ const ExpenseBtn = ({
         aria-label="Add expense"
         className={`${primaryButton} h-10 w-10 px-0 ${className} flex items-center justify-center text-center`}
       >
-        {/* <FaPlus /> */}
+
         <h1 className="font-bold text-2xl">+</h1>
       </button>
     );

@@ -57,11 +57,3 @@ export const loadMonthlyIncomes = async (
   }
   return incomes;
 };
-
-export const loadIncome = async (userId: string): Promise<number> => {
-  const month = currentMonthKey();
-  const doc = await budgetsCollection().findOne({
-    _id: budgetDocId(userId, month),
-  });
-  return doc?.income ?? 0;
-};

@@ -7,10 +7,7 @@ import { usePathname } from "next/navigation";
 
 import ExpenseBtn from "@/Components/AddExpenseBtn/ExpenseBtn";
 import AddBalanceBtn from "@/Components/AddBalanceBtn/AddBalanceBtn";
-import UserMenu, {
-  UserMenu1,
-  type ShellUser,
-} from "@/Components/UserMenu/UserMenu";
+import { UserMenu1, type ShellUser } from "@/Components/UserMenu/UserMenu";
 
 import {
   MdDashboard,

@@ -85,7 +85,7 @@ const AppShell = ({
             </div>
 
             <div className="hidden lg:block">
-              {/* <p className="text-[11px] font-medium text-muted"></p> */}
+
               <h1 className="text-3xl font-semibold text-ink">
                 Hi {user?.name || "Guest"} 👋
               </h1>

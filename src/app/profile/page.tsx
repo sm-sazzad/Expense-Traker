@@ -38,9 +38,7 @@ export default async function ProfilePage() {
         <h1 className="mt-1 text-xl font-semibold tracking-tight text-ink sm:text-2xl">
           Profile
         </h1>
-        {/* <p className="mt-1 text-sm text-muted">
-          Your account details are stored in MongoDB.
-        </p> */}
+
       </div>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3">
